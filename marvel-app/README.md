@@ -2,9 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-###npx create-react-app mervel-app
+### npx create-react-app mervel-app
 
-###cd marvel-app
+### cd marvel-app
 
 ### npm i sass
 
