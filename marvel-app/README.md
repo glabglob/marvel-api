@@ -12,9 +12,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 
 
-## Template which i use
+## Template which i used
 
 https://www.figma.com/file/v1iwmqWIocIElrFFyYURXa/Marvel-DB-(Copy)?node-id=0%3A1
+
+
+## Get some API from https://developer.marvel.com/
 
 
 
