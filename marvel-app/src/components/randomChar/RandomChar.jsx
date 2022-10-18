@@ -6,11 +6,11 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 class RandomChar extends Component {
-    constructor(props) {
-        super(props)
-        // так делать нельзя ,  позже заменю
-        this.updateChar();
-    }
+    // constructor(props) {
+    //     super(props)
+    //     // так делать нельзя , нужно  запускать этот метод в хуке на 44 строке 
+    //     // this.updateChar();
+    // }
     state = {
         char: {},
         loading: true,
@@ -19,18 +19,18 @@ class RandomChar extends Component {
 
     marvelService = new MarvelService();
 
-    onError = () =>{
-        this.setState({ 
-            loading : false,
-            error : true
-         });
+    onError = () => {
+        this.setState({
+            loading: false,
+            error: true
+        });
     }
 
     onCharLoaded = (char) => {
-        this.setState({ 
+        this.setState({
             char,
-            loading : false
-         });
+            loading: false
+        });
     }
 
     updateChar = () => {
@@ -40,18 +40,23 @@ class RandomChar extends Component {
             .then(this.onCharLoaded)
             .catch(this.onError);
     }
+    // вот  тут правильно  , без  багов и без  многоразового  вызова метода
+    componentDidMount() {
+        this.updateChar();
+    }
+
 
     render() {
-        const { char, loading, error} = this.state
-        const errorMessage = error ? <Error/> : null;
-        const spinner = loading ? <Spinner/> : null;
-        const content = !(loading || error) ? <DynamicRandomCharSection char={char}/> : null;
+        const { char, loading, error } = this.state
+        const errorMessage = error ? <Error /> : null;
+        const spinner = loading ? <Spinner /> : null;
+        const content = !(loading || error) ? <DynamicRandomCharSection char={char} /> : null;
         return (
             <div className="randomchar">
                 {errorMessage}
                 {spinner}
                 {content}
-                <div className="randomchar__static"> 
+                <div className="randomchar__static">
                     <p className="randomchar__title">
                         Random character for today!<br />
                         Do you want to get to know him better?
@@ -60,7 +65,7 @@ class RandomChar extends Component {
                         Or choose another one
                     </p>
                     <button className="button button__main">
-                        <div className="inner">try it</div>
+                        <div className="inner" onClick={this.updateChar}>try it</div>
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
                 </div>
@@ -74,10 +79,14 @@ class RandomChar extends Component {
 const DynamicRandomCharSection = ({ char }) => {
 
     const { name, description, thumbnail, homepage, wiki } = char;
+    let isAvailableImg = { 'objectFit': 'cover' };
 
+    if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
+        isAvailableImg = { 'objectFit': 'contain' };
+    }
     return (
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className="randomchar__img" />
+            <img src={thumbnail} alt="Random character" className="randomchar__img" style={isAvailableImg} />
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">
