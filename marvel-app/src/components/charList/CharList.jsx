@@ -11,7 +11,9 @@ class CharList extends Component {
     state = {
         charList: [],
         loading: true,
-        error: false
+        error: false,
+        newCharsLoading: false,
+        offset: 210
     }
 
     marvelService = new MarvelService();
@@ -23,17 +25,31 @@ class CharList extends Component {
         });
     }
 
-    onCharListLoaded = (charList) => {
-        this.setState({
-            charList,
-            loading: false
-        });
+    onRequest = (offset) => {
+        this.onCharListLoading();
+        this.marvelService
+            .getAllChars(offset)
+            .then(this.onCharListLoaded)
+            .catch(this.onError);
+    }
+
+    onCharListLoading = () => {
+        this.setState({ newCharsLoading: true });
+    }
+
+    onCharListLoaded = (newCharList) => {
+        this.setState(({ offset, charList }) => (
+            {
+                charList: [...charList, ...newCharList],
+                loading: false,
+                newCharsLoading: false,
+                offset: offset + 9
+            }
+        ));
     }
 
     componentDidMount() {
-        this.marvelService.getAllChars()
-            .then(this.onCharListLoaded)
-            .catch(this.onError);
+        this.onRequest();
     }
 
     dynamicCharList(charList) {
@@ -59,17 +75,19 @@ class CharList extends Component {
 
     render() {
 
-        const { charList, loading, error } = this.state;
+        const { charList, loading, error, newCharsLoading, offset } = this.state;
         const charCardsList = this.dynamicCharList(charList)
-        const errorMessage = error ? <Error/> : null;
-        const spinner = loading ? <Spinner/> : null;
+        const errorMessage = error ? <Error /> : null;
+        const spinner = loading ? <Spinner /> : null;
         const content = !(loading || error) ? charCardsList : null;
         return (
             <div className="char__list">
                 {errorMessage}
                 {spinner}
                 {content}
-                <button className="button button__main button__long">
+                <button className="button button__main button__long"
+                    disabled={newCharsLoading}
+                    onClick={() => this.onRequest(offset)}>
                     <div className="inner">load more</div>
                 </button>
             </div>
