@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import MarvelService from '../../services/MarvelServices';
 import Spinner from '../spinner/Spinner';
@@ -90,7 +91,7 @@ const ViewContent = ({ char }) => {
     return (
         <>
             <div className="char__basics">
-                <img src={thumbnail} alt={name} style={isAvailableImg}/>
+                <img src={thumbnail} alt={name} style={isAvailableImg} />
                 <div>
                     <div className="char__info-name">{name}</div>
                     <div className="char__btns">
@@ -121,6 +122,10 @@ const ViewContent = ({ char }) => {
             </ul>
         </>
     )
+}
+
+CharInfo.propTypes = {
+    charid: PropTypes.number,
 }
 
 export default CharInfo;

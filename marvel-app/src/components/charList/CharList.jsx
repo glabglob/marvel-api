@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import MarvelService from '../../services/MarvelServices';
 import Error from '../error/Error';
 import Spinner from '../spinner/Spinner';
@@ -13,7 +15,8 @@ class CharList extends Component {
         loading: true,
         error: false,
         newCharsLoading: false,
-        offset: 210
+        offset: 1541,
+        charEnded: false
     }
 
     marvelService = new MarvelService();
@@ -38,12 +41,18 @@ class CharList extends Component {
     }
 
     onCharListLoaded = (newCharList) => {
+        let ended = false;
+        if (newCharList.length < 9) {
+            ended = true;
+        }
+
         this.setState(({ offset, charList }) => (
             {
                 charList: [...charList, ...newCharList],
                 loading: false,
                 newCharsLoading: false,
-                offset: offset + 9
+                offset: offset + 9,
+                charEnded: ended
             }
         ));
     }
@@ -75,7 +84,7 @@ class CharList extends Component {
 
     render() {
 
-        const { charList, loading, error, newCharsLoading, offset } = this.state;
+        const { charList, loading, error, newCharsLoading, offset, charEnded } = this.state;
         const charCardsList = this.dynamicCharList(charList)
         const errorMessage = error ? <Error /> : null;
         const spinner = loading ? <Spinner /> : null;
@@ -87,12 +96,17 @@ class CharList extends Component {
                 {content}
                 <button className="button button__main button__long"
                     disabled={newCharsLoading}
+                    style={{ 'display': charEnded ? 'none' : 'block' }}
                     onClick={() => this.onRequest(offset)}>
                     <div className="inner">load more</div>
                 </button>
             </div>
         )
     }
+}
+
+CharList.protoTypes = {
+    onSelectedChar: PropTypes.func.isRequired
 }
 
 export default CharList;
