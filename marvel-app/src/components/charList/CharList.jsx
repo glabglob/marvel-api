@@ -63,14 +63,27 @@ class CharList extends Component {
 
     dynamicCharList(charList) {
         let items = charList.map((item) => {
+
             let isAvailableImg = { 'objectFit': 'cover' };
 
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
                 isAvailableImg = { 'objectFit': 'contain' };
             }
+
+            const activeChar = item.id === this.props.id;
+            const clazz = activeChar ? 'char__item char__item_selected': 'char__item';
+
             return (
-                <li className="char__item" key={item.id} onClick={() => this.props.onSelectedChar(item.id)}>
-                    <img src={item.thumbnail} alt={item.name} style={isAvailableImg} />
+                <li className={clazz}
+                    key={item.id}
+                    onClick={() => this.props.onSelectedChar(item.id)}
+                    tabIndex={0}
+                >
+                    <img
+                        src={item.thumbnail}
+                        alt={item.name}
+                        style={isAvailableImg}
+                    />
                     <div className="char__name">{item.name}</div>
                 </li>
             )

@@ -16,6 +16,7 @@ class App extends Component {
 
     onSelectedChar = (id) => {
         this.setState({ selectedChar: id });
+        console.log(id);
     }
 
     render() {
@@ -27,7 +28,7 @@ class App extends Component {
                         <RandomChar />
                     </ErrorBoundary>
                     <div className="char__content">
-                        <CharList onSelectedChar={this.onSelectedChar} />
+                        <CharList onSelectedChar={this.onSelectedChar} id={this.state.selectedChar}/>
                         <ErrorBoundary>
                             <CharInfo charId={this.state.selectedChar} />
                         </ErrorBoundary>
