@@ -1,31 +1,26 @@
-class MarvelService {
+import { useHttp } from '../components/hooks/http.hook'
 
-    _apiBase = 'https://gateway.marvel.com:443/v1/public/';
-    _apiKey = 'apikey=c9f6db08a4d3cfbe250057b60fb6409b';
-    _baseCharsOffset = 210;
-    getResource = async (url) => {
-        let response = await fetch(url);
+const useMarvelService = () => {
 
-        if (!response.ok) {
-            throw new Error(`Coud not fetch ${url}, status: ${response.status}`)
-        }
+    const { loading, request, error, clearError } = useHttp();
 
-        return await response.json()
+    const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
+    const _apiKey = 'apikey=c9f6db08a4d3cfbe250057b60fb6409b';
+    const _baseCharsOffset = 210;
+
+    const getAllChars = async (offset = _baseCharsOffset) => {
+        const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
+        return res.data.results.map(_transformChar)
     }
 
-    getAllChars = async (offset = this._baseCharsOffset) => {
-        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`);
-        return res.data.results.map(this._transformChar)
+    const getChar = async (id) => {
+        const res = await request(`${_apiBase}characters/${id}?limit=9&offset=${_baseCharsOffset}&${_apiKey}`);
+        return _transformChar(res.data.results[0])
     }
-
-    getChar = async (id) => {
-        const res = await this.getResource(`${this._apiBase}characters/${id}?limit=9&offset=210&${this._apiKey}`);
-        return this._transformChar(res.data.results[0])
-    }
-    _transformChar = (char) => {
+    const _transformChar = (char) => {
 
         if (!char.description) {
-            char.description = 'There is no description' 
+            char.description = 'There is no description'
         }
         if (char.description.length > 150) {
             char.description = char.description.slice(0, 150) + '...'
@@ -41,6 +36,7 @@ class MarvelService {
             comics: char.comics.items
         }
     }
+    return { loading, error, getAllChars, getChar, clearError }
 }
 
-export default MarvelService;
+export default useMarvelService;
