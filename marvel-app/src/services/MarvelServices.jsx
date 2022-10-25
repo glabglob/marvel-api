@@ -18,7 +18,7 @@ const useMarvelService = () => {
         return _transformChar(res.data.results[0])
     }
 
-    const getAllComics = async (offset = 0)=>{
+    const getAllComics = async (offset = 0) => {
         const res = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`)
         return res.data.results.map(_transformComics)
     }
@@ -53,14 +53,17 @@ const useMarvelService = () => {
         if (!comics.description) {
             comics.description = 'There is no description';
         }
+
         if (!comics.prices.price) {
             comics.prices.price = 'It is not available now';
-        }else{
+        } else {
             comics.prices.price = `${comics.prices.price} $`
         }
+
         if (!comics.textObjects.language) {
             comics.textObjects.language = 'En-Us';
         }
+
         if (!comics.pageCount) {
             comics.pageCount = 'There is no information about number of pages'
         }
