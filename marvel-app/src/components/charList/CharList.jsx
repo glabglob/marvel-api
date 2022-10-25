@@ -21,7 +21,6 @@ const CharList = (props) => {
         initial ? setNewCharsLoading(false) : setNewCharsLoading(true);
         getAllChars(offset)
             .then(onCharListLoaded);
-
     }
 
     const onCharListLoaded = (newCharList) => {
@@ -41,7 +40,7 @@ const CharList = (props) => {
     }, [])
 
     function dynamicCharList(charList) {
-        let items = charList.map((item) => {
+        let items = charList.map((item, i) => {
 
             let isAvailableImg = { 'objectFit': 'cover' };
 
@@ -54,7 +53,7 @@ const CharList = (props) => {
 
             return (
                 <li className={clazz}
-                    key={item.id}
+                    key={i}
                     onClick={() => props.onSelectedChar(item.id)}
                     tabIndex={0}
                 >

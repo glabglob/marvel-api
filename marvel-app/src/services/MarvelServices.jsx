@@ -7,7 +7,7 @@ const useMarvelService = () => {
     const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
     const _apiKey = 'apikey=c9f6db08a4d3cfbe250057b60fb6409b';
     const _baseCharsOffset = 210;
-
+    const _baseComicsOffset = 210;
     const getAllChars = async (offset = _baseCharsOffset) => {
         const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
         return res.data.results.map(_transformChar)
@@ -17,6 +17,17 @@ const useMarvelService = () => {
         const res = await request(`${_apiBase}characters/${id}?limit=9&offset=${_baseCharsOffset}&${_apiKey}`);
         return _transformChar(res.data.results[0])
     }
+
+    const getAllComics = async (offset = 0)=>{
+        const res = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`)
+        return res.data.results.map(_transformComics)
+    }
+
+    const getComics = async (id) => {
+        const res = await request(` ${_apiBase}comics/${id}?limit=8&offset=${_baseComicsOffset}&${_apiKey}`);
+        return _transformComics(res.data.results[0])
+    }
+
     const _transformChar = (char) => {
 
         if (!char.description) {
@@ -36,7 +47,36 @@ const useMarvelService = () => {
             comics: char.comics.items
         }
     }
-    return { loading, error, getAllChars, getChar, clearError }
+
+    const _transformComics = (comics) => {
+
+        if (!comics.description) {
+            comics.description = 'There is no description';
+        }
+        if (!comics.prices.price) {
+            comics.prices.price = 'It is not available now';
+        }else{
+            comics.prices.price = `${comics.prices.price} $`
+        }
+        if (!comics.textObjects.language) {
+            comics.textObjects.language = 'En-Us';
+        }
+        if (!comics.pageCount) {
+            comics.pageCount = 'There is no information about number of pages'
+        }
+
+        return {
+            id: comics.id,
+            title: comics.title,
+            description: comics.description,
+            pageCount: comics.pageCount,
+            thumbnail: comics.thumbnail.path + '.' + comics.thumbnail.extension,
+            language: comics.textObjects.language,
+            price: comics.prices.price
+        }
+    }
+
+    return { loading, error, getAllChars, getChar, clearError, getAllComics, getComics }
 }
 
 export default useMarvelService;
