@@ -8,6 +8,7 @@ const useMarvelService = () => {
     const _apiKey = 'apikey=c9f6db08a4d3cfbe250057b60fb6409b';
     const _baseCharsOffset = 210;
     const _baseComicsOffset = 210;
+    
     const getAllChars = async (offset = _baseCharsOffset) => {
         const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
         return res.data.results.map(_transformChar)
