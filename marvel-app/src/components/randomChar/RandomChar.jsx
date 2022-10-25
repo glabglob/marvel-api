@@ -1,84 +1,70 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import MarvelService from '../../services/MarvelServices';
 import Spinner from '../spinner/Spinner';
 import Error from '../error/Error';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
-class RandomChar extends Component {
-    // constructor(props) {
-    //     super(props)
-    //     // так делать нельзя , нужно  запускать этот метод в хуке на 44 строке 
-    //     // this.updateChar();
-    // }
-    state = {
-        char: {},
-        loading: true,
-        error: false
+const RandomChar = (props) => {
+
+    const [char, setChar] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+
+    const marvelService = new MarvelService();
+
+    const onError = () => {
+        setLoading(loading => false);
+        setError(error => true);
     }
 
-    marvelService = new MarvelService();
-
-    onError = () => {
-        this.setState({
-            loading: false,
-            error: true
-        });
+    const onCharLoaded = (char) => {
+        setChar(char);
+        setLoading(lodaing => false);
     }
 
-    onCharLoaded = (char) => {
-        this.setState({
-            char,
-            loading: false
-        });
-    }
-    
-    onCharLoading = () => {
-        this.setState({
-            loading: true
-        })
+    const onCharLoading = () => {
+        setLoading(loading => true);
     }
 
-    updateChar = () => {
+    const updateChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        this.onCharLoading();
-        this.marvelService
-            .getChar(id)
-            .then(this.onCharLoaded)
-            .catch(this.onError);
-    }
-    // вот  тут правильно  , без  багов и без  многоразового  вызова метода
-    componentDidMount() {
-        this.updateChar();
+        onCharLoading();
+        marvelService.getChar(id)
+            .then(onCharLoaded)
+            .catch(onError);
     }
 
+    useEffect(() => {
+        updateChar();
+        // eslint-disable-next-line
+    }, [])
 
-    render() {
-        const { char, loading, error } = this.state
-        const errorMessage = error ? <Error /> : null;
-        const spinner = loading ? <Spinner /> : null;
-        const content = !(loading || error) ? <DynamicRandomCharSection char={char} /> : null;
-        return (
-            <div className="randomchar">
-                {errorMessage}
-                {spinner}
-                {content}
-                <div className="randomchar__static">
-                    <p className="randomchar__title">
-                        Random character for today!<br />
-                        Do you want to get to know him better?
-                    </p>
-                    <p className="randomchar__title">
-                        Or choose another one
-                    </p>
-                    <button className="button button__main" onClick={this.updateChar}>
-                        <div className="inner">try it</div>
-                    </button>
-                    <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
-                </div>
+
+    const errorMessage = error ? <Error /> : null;
+    const spinner = loading ? <Spinner /> : null;
+    const content = !(loading || error) ? <DynamicRandomCharSection char={char} /> : null;
+    return (
+        <div className="randomchar">
+            {errorMessage}
+            {spinner}
+            {content}
+            <div className="randomchar__static">
+                <p className="randomchar__title">
+                    Random character for today!<br />
+                    Do you want to get to know him better?
+                </p>
+                <p className="randomchar__title">
+                    Or choose another one
+                </p>
+                <button className="button button__main" onClick={updateChar}>
+                    <div className="inner">try it</div>
+                </button>
+                <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
             </div>
-        )
-    }
+        </div>
+    )
+
 }
 // сюда я вынес динамически отрисовываемый блок
 // который потом поместил в верстку и передал  ему пропсом обьект  char,
