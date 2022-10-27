@@ -66,7 +66,7 @@ const useMarvelService = () => {
         }
 
         if (!comics.pageCount) {
-            comics.pageCount = 'There is no information about number of pages'
+            comics.pageCount = 'There is no information about number of'
         }
 
         return {
