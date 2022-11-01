@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/MarvelServices';
@@ -15,7 +16,7 @@ const CharList = (props) => {
     const [offset, setOffset] = useState(1541);
     const [charEnded, setCharEnded] = useState(false);
 
-    const {loading, error, getAllChars} = useMarvelService();
+    const { loading, error, getAllChars } = useMarvelService();
 
     const onRequest = (offset, initial) => {
         initial ? setNewCharsLoading(false) : setNewCharsLoading(true);
@@ -25,7 +26,7 @@ const CharList = (props) => {
 
     const onCharListLoaded = (newCharList) => {
         let ended = false;
-        
+
         newCharList.length < 9 ? ended = true : ended = false
 
         setCharList(charList => [...charList, ...newCharList]);
@@ -52,24 +53,31 @@ const CharList = (props) => {
             const clazz = activeChar ? 'char__item char__item_selected' : 'char__item';
 
             return (
-                <li className={clazz}
-                    key={i}
-                    onClick={() => props.onSelectedChar(item.id)}
-                    tabIndex={0}
-                >
-                    <img
-                        src={item.thumbnail}
-                        alt={item.name}
-                        style={isAvailableImg}
-                    />
-                    <div className="char__name">{item.name}</div>
-                </li>
+                <CSSTransition key={i} timeout={500} classNames={clazz}>
+                    <li className={clazz}
+                        onClick={() => props.onSelectedChar(item.id)}
+                        onKeyPress={(e) => {
+                            if (e.key === ' ' || e.key === "Enter") {
+                                props.onSelectedChar(item.id);
+
+                            }
+                        }}
+                        tabIndex={0}
+                    >
+                        <img
+                            src={item.thumbnail}
+                            alt={item.name}
+                            style={isAvailableImg}
+                        />
+                        <div className="char__name">{item.name}</div>
+                    </li>
+                </CSSTransition>
             )
         });
         return (
-            <ul className="char__grid">
+            <TransitionGroup component={'ul'} className="char__grid">
                 {items}
-            </ul>
+            </TransitionGroup>
         )
     }
 
