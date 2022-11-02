@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/MarvelServices';
@@ -82,9 +83,12 @@ const ViewContent = ({ char }) => {
                 {comics.length > 0 ? null : 'There is no  comics'}
                 {
                     comics.map((item, i) => {
+                        const id = item.resourceURI.replace(/http:\/\/gateway.marvel.com\/v1\/public\/comics\//, "");
                         return (
                             <li className="char__comics-item" key={i}>
-                                {item.name}
+                                <Link to={`/comics/${id}`}>
+                                    {item.name}
+                                </Link>
                             </li>
                         )
                     })

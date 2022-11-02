@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { Helmet } from "react-helmet";
 
 import useMarvelService from '../../services/MarvelServices';
 import Spinner from '../spinner/Spinner';
@@ -49,6 +50,10 @@ const ViewContent = ({ char }) => {
 
     return (
         <>
+            <Helmet>
+                <meta name="description" content={`${name} character page`} />
+                <title>{name}</title>
+            </Helmet>
             <AppBanner />
             <div className="single-char">
                 <img src={thumbnail} alt={name} className="single-char__char-img" />
